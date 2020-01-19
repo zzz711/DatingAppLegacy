@@ -36,9 +36,6 @@ namespace DatingApp_API.Data
 
                 for(int i = 0; i < computedHash.Length; i++)
                 {
-                    Console.WriteLine(passwordHash[i]);
-                    Console.WriteLine(computedHash[i]);
-
                     if(computedHash[i] != passwordHash[i])
                         return false;
                 }
@@ -67,9 +64,7 @@ namespace DatingApp_API.Data
             {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                Console.WriteLine(passwordHash[0]);
-            }
-            
+            }            
         }
 
         public async Task<bool> UserExists(string username)
