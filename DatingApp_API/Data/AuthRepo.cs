@@ -29,13 +29,16 @@ namespace DatingApp_API.Data
 
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
-            using(var hmac = new System.Security.Cryptography.HMACSHA512())
+            using(var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt))
             {
                 
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
 
                 for(int i = 0; i < computedHash.Length; i++)
                 {
+                    Console.WriteLine(passwordHash[i]);
+                    Console.WriteLine(computedHash[i]);
+
                     if(computedHash[i] != passwordHash[i])
                         return false;
                 }
@@ -64,6 +67,7 @@ namespace DatingApp_API.Data
             {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                Console.WriteLine(passwordHash[0]);
             }
             
         }
