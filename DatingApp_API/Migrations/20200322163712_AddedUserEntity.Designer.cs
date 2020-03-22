@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatingApp_API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20191215180140_AddedUserEntity")]
+    [Migration("20200322163712_AddedUserEntity")]
     partial class AddedUserEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -17,6 +17,34 @@ namespace DatingApp_API.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.0.1");
+
+            modelBuilder.Entity("DatingApp_API.Models.Photo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsMain")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Photos");
+                });
 
             modelBuilder.Entity("DatingApp_API.Models.User", b =>
                 {
@@ -27,8 +55,8 @@ namespace DatingApp_API.Migrations
                     b.Property<byte[]>("PasswordHash")
                         .HasColumnType("BLOB");
 
-                    b.Property<byte>("PasswordSalt")
-                        .HasColumnType("INTEGER");
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("Username")
                         .HasColumnType("TEXT");
@@ -50,6 +78,15 @@ namespace DatingApp_API.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Values");
+                });
+
+            modelBuilder.Entity("DatingApp_API.Models.Photo", b =>
+                {
+                    b.HasOne("DatingApp_API.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
