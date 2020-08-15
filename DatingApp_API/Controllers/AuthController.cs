@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingApp_API.Data;
 using DatingApp_API.Dtos;
 using DatingApp_API.Models;
@@ -19,9 +20,11 @@ namespace DatingApp_API.Controllers
         private readonly IAuthRepo repo;
 
         public IConfiguration _config { get; }
+        private readonly IMapper mapper;
 
-        public AuthController(IAuthRepo repo, IConfiguration config)
+        public AuthController(IAuthRepo repo, IConfiguration config, IMapper mapper)
         {
+            this.mapper = mapper;
             this.repo = repo;
             _config = config;
         }
@@ -29,10 +32,10 @@ namespace DatingApp_API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userDto)
         {
-            
+
             userDto.Username = userDto.Username.ToLower();
-            
-            if(await repo.UserExists(userDto.Username))
+
+            if (await repo.UserExists(userDto.Username))
                 return BadRequest("Username already exists");
 
             var userToCreate = new User
@@ -50,7 +53,7 @@ namespace DatingApp_API.Controllers
         {
             var userFromRepo = await repo.Login(userForLoginDto.Username, userForLoginDto.Password);
 
-            if(userFromRepo == null)
+            if (userFromRepo == null)
                 return Unauthorized();
 
             var claims = new[]
@@ -74,8 +77,12 @@ namespace DatingApp_API.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return Ok(new {
-                token = tokenHandler.WriteToken(token)
+            var user = mapper.Map<UserForListDto>(userFromRepo);
+
+            return Ok(new
+            {
+                token = tokenHandler.WriteToken(token),
+                user
             });
         }
     }
