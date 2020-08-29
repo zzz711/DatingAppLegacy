@@ -19,7 +19,7 @@ export class PhotoEditorComponent implements OnInit {
   hasBaseDropZoneOver: boolean;
   response: string;
   baseUrl = environment.apiUrl;
-  currentMain:  Photo;
+  currentMain: Photo;
 
   constructor(private authService: AuthService, private userService: UserService, private alterify: AlertifyService) {}
 
@@ -55,6 +55,12 @@ export class PhotoEditorComponent implements OnInit {
           isMain: res.isMain
         };
         this.photos.push(photo);
+
+        if(photo.isMain) {
+          this.authService.changeMemberPhoto(photo.url);
+          this.authService.currentUser.photoUrl = photo.url;
+          localStorage.setItem('user', JSON.stringify(this.authService.currentUser));
+        }
       }
     };
   }
